@@ -6,8 +6,8 @@ variables:
   FRONTEND_ID: frontendid
   EMI_API_ID: apiid
   EMIGATEWAY_IMAGE_NAME: apiidcamellc #emi-gateway
-  BE_IMAGE_NAME: backend.backendname
-  BE_IMAGE_TAG: 0.0.1
+  BE_backendnameuppercase_IMAGE_NAME: backend.backendname
+  BE_backendnameuppercase_IMAGE_TAG: 0.0.1
 
 stages:
   - prepare
@@ -100,7 +100,7 @@ pack:emi:
     docker login -u "$CONTAINER_REGISTRY_ACCESS_TOKEN_LOGIN" -p "$CONTAINER_REGISTRY_ACCESS_TOKEN" $CI_REGISTRY    
     # BUILD AND PUBLISH DOCKER IAMGES
     mkdir .artifacts_pack_emi
-    export IMAGE_NAMESPACE=$CI_REGISTRY/one-nebula/super-van-plus/emi/$branch
+    export IMAGE_NAMESPACE=$CI_REGISTRY/git_project/emi/$branch
     docker build -t $IMAGE_NAMESPACE/$EMI_IMAGE_NAME:latest .artifacts_build_emi/emi
     docker push $IMAGE_NAMESPACE/$EMI_IMAGE_NAME:latest
     echo $IMAGE_NAMESPACE/$EMI_IMAGE_NAME@$(docker pull $IMAGE_NAMESPACE/$EMI_IMAGE_NAME:latest | grep sha256 | cut -c 9-) > .artifacts_pack_emi/DOCKER_GENERATED_IMAGE_DIGEST
@@ -180,7 +180,7 @@ pack:emi-gateway:
     docker login -u "$CONTAINER_REGISTRY_ACCESS_TOKEN_LOGIN" -p "$CONTAINER_REGISTRY_ACCESS_TOKEN" $CI_REGISTRY    
     # BUILD AND PUBLISH DOCKER IAMGES
     mkdir .artifacts_pack_emigateway
-    export IMAGE_NAMESPACE=$CI_REGISTRY/one-nebula/super-van-plus/emi-gateway/$branch
+    export IMAGE_NAMESPACE=$CI_REGISTRY/git_project/emi-gateway/$branch
     docker build -t $IMAGE_NAMESPACE/$EMIGATEWAY_IMAGE_NAME:latest .artifacts_build_emi_gateway/emi-gateway
     docker push $IMAGE_NAMESPACE/$EMIGATEWAY_IMAGE_NAME:latest
     echo $IMAGE_NAMESPACE/$EMIGATEWAY_IMAGE_NAME@$(docker pull $IMAGE_NAMESPACE/$EMIGATEWAY_IMAGE_NAME:latest | grep sha256 | cut -c 9-) > .artifacts_pack_emigateway/DOCKER_GENERATED_IMAGE_DIGEST
@@ -213,7 +213,7 @@ deploy:emi-gateway:
       - $CI_COMMIT_MESSAGE =~ /cicd_gateway-emi/
 
 
-######## BACKEND ############
+######## BACKEND: backendnameuppercase ############
 pack:backend-backendname:
   stage: pack
   tags:
@@ -232,10 +232,10 @@ pack:backend-backendname:
     # Login into docker registry
     docker login -u "$CONTAINER_REGISTRY_ACCESS_TOKEN_LOGIN" -p "$CONTAINER_REGISTRY_ACCESS_TOKEN" $CI_REGISTRY        
     # BUILD AND PUBLISH DOCKER IMAGES
-    export IMAGE_NAMESPACE=$CI_REGISTRY/one-nebula/super-van-plus/$CI_PROJECT_NAME/$branch
-    docker build -t $IMAGE_NAMESPACE/$BE_IMAGE_NAME:$BE_IMAGE_TAG -t $IMAGE_NAMESPACE/$BE_IMAGE_NAME:latest backend/backendname
-    docker push $IMAGE_NAMESPACE/$BE_IMAGE_NAME:$BE_IMAGE_TAG
-    docker push $IMAGE_NAMESPACE/$BE_IMAGE_NAME:latest
+    export IMAGE_NAMESPACE=$CI_REGISTRY/git_project/$CI_PROJECT_NAME/$branch
+    docker build -t $IMAGE_NAMESPACE/$BE_backendnameuppercase_IMAGE_NAME:$BE_backendnameuppercase_IMAGE_TAG -t $IMAGE_NAMESPACE/$BE_backendnameuppercase_IMAGE_NAME:latest backend/backendname
+    docker push $IMAGE_NAMESPACE/$BE_backendnameuppercase_IMAGE_NAME:$BE_backendnameuppercase_IMAGE_TAG
+    docker push $IMAGE_NAMESPACE/$BE_backendnameuppercase_IMAGE_NAME:latest
   only:
     variables:
       - $CI_COMMIT_MESSAGE =~ /cicd_backend-backendname/
@@ -255,11 +255,11 @@ deploy:backend-backendname:
     gcloud --quiet config set compute/zone $GKE_ZONE
     gcloud --quiet container clusters get-credentials $GKE_CLUSTER
     # override deployment image path
-    export IMAGE_NAMESPACE=$CI_REGISTRY/one-nebula/super-van-plus/$CI_PROJECT_NAME/$branch
-    for xi in $(ls deployment/gke/*.y*ml); do sed -i -e "s|IMAGE_NAMESPACE|$IMAGE_NAMESPACE|g" -e "s|IMAGE_NAME|$BE_IMAGE_NAME|g" -e "s|IMAGE_TAG|$BE_IMAGE_TAG|g" $xi ; done
+    export IMAGE_NAMESPACE=$CI_REGISTRY/git_project/$CI_PROJECT_NAME/$branch
+    for xi in $(ls deployment/gke/*.y*ml); do sed -i -e "s|IMAGE_NAMESPACE|$IMAGE_NAMESPACE|g" -e "s|IMAGE_NAME|$BE_backendnameuppercase_IMAGE_NAME|g" -e "s|IMAGE_TAG|$BE_backendnameuppercase_IMAGE_TAG|g" $xi ; done
     # for xi in $(ls deployment/gke/*.y*ml); do sed -i "s|IMAGE_NAMESPACE|$IMAGE_NAMESPACE|g" $xi ; done
-    # for xi in $(ls deployment/gke/*.y*ml); do sed -i "s|IMAGE_NAME|$BE_CRONJOB_IMAGE_NAME|g" $xi ; done
-    # for xi in $(ls deployment/gke/*.y*ml); do sed -i "s|IMAGE_TAG|$BE_CRONJOB_IMAGE_TAG|g" $xi ; done
+    # for xi in $(ls deployment/gke/*.y*ml); do sed -i "s|IMAGE_NAME|$BE_backendnameuppercase_IMAGE_NAME|g" $xi ; done
+    # for xi in $(ls deployment/gke/*.y*ml); do sed -i "s|IMAGE_TAG|$BE_backendnameuppercase_IMAGE_TAG|g" $xi ; done
     # deploy on kubernetes
     kubectl apply -f deployment/gke/
   only:

@@ -41,7 +41,7 @@
         "scopeParamRequired": true,
         "composite": false,
         "clientRole": false,
-        "containerId": "project_context"
+        "containerId": "project_context_uc"
       },
       {
         "id": "d9766548-de1a-4f9b-9201-834f66478e8e",
@@ -50,7 +50,7 @@
         "scopeParamRequired": false,
         "composite": false,
         "clientRole": false,
-        "containerId": "project_context"
+        "containerId": "project_context_uc"
       },
       {
         "id": "c2b57919-f219-4f83-8ac5-a4a025480bda",
@@ -59,7 +59,7 @@
         "scopeParamRequired": false,
         "composite": false,
         "clientRole": false,
-        "containerId": "project_context"
+        "containerId": "project_context_uc"
       },
       {
         "id": "bdc61a8e-92bb-4a55-8144-970e48c8c7e2",
@@ -67,7 +67,7 @@
         "scopeParamRequired": false,
         "composite": false,
         "clientRole": false,
-        "containerId": "project_context"
+        "containerId": "project_context_uc"
       }
     ],
     "client": {
@@ -358,7 +358,7 @@
       "id": "32558e71-effc-4c22-a98c-b6265b5e6e60",
       "clientId": "account",
       "name": "${client_account}",
-      "baseUrl": "/auth/realms/DEV_project_context/account",
+      "baseUrl": "/auth/realms/DEV_project_context_uc/account",
       "surrogateAuthRequired": false,
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
@@ -368,7 +368,7 @@
         "view-profile"
       ],
       "redirectUris": [
-        "/auth/realms/DEV_project_context/account/*"
+        "/auth/realms/DEV_project_context_uc/account/*"
       ],
       "webOrigins": [],
       "notBefore": 0,
