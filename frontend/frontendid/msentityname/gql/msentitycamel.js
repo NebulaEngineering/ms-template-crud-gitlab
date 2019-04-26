@@ -14,6 +14,7 @@ export const msnamepascalmsentitypascal = gql`
       creatorUser
       modificationTimestamp
       modifierUser
+      businessId
     }
   }
 `;
@@ -31,6 +32,7 @@ export const msnamepascalmsentitiespascal = gql`
       creatorUser
       modificationTimestamp
       modifierUser
+      businessId
     }
   }
 `;
@@ -82,6 +84,7 @@ export const msnamepascalmsentitypascalUpdatedSubscription = gql`
       creatorUser
       modificationTimestamp
       modifierUser
+      businessId
     }
   }
 `;

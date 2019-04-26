@@ -278,8 +278,8 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
       }),
       mergeMap(([filterInput, paginationInput]) => {
         return forkJoin(
-          this.getmsentitycamelList$(filterInput, paginationInput),
-          this.getmsentitycamelSize$(filterInput),
+          this.getmsentitypascalList$(filterInput, paginationInput),
+          this.getmsentitypascalSize$(filterInput),
         )
       }),
       takeUntil(this.ngUnsubscribe)
@@ -295,8 +295,8 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
    * @param filterInput 
    * @param paginationInput 
    */
-  getmsentitycamelList$(filterInput, paginationInput){
-    return this.msentitypascalListservice.getmsentitycamelList$(filterInput, paginationInput)
+  getmsentitypascalList$(filterInput, paginationInput){
+    return this.msentitypascalListservice.getmsentitypascalList$(filterInput, paginationInput)
     .pipe(
       mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
       map(resp => resp.data.msnamepascalmsentitiespascal)
@@ -307,8 +307,8 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
    * Gets the msentitycamel size
    * @param filterInput 
    */
-  getmsentitycamelSize$(filterInput){
-    return this.msentitypascalListservice.getmsentitycamelSize$(filterInput)
+  getmsentitypascalSize$(filterInput){
+    return this.msentitypascalListservice.getmsentitypascalSize$(filterInput)
     .pipe(
       mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
       map(resp => resp.data && resp.data.msnamepascalmsentitiespascalSize ? resp.data.msnamepascalmsentitiespascalSize: 0)
