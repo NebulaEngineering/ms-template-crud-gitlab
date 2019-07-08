@@ -30,7 +30,10 @@ spec:
         - name: EVENT_STORE_STORE_TYPE
           value: MONGO
         - name: EVENT_STORE_STORE_URL
-          value: mongodb://dbevents-0.dbevents:27017,dbevents-1.dbevents:27017,dbevents-2.dbevents:27017/test?replicaSet=rs0
+          valueFrom:
+            secretKeyRef:
+              name: dbevents-user
+              key: url
         - name: EVENT_STORE_STORE_AGGREGATES_DB_NAME
           value: Aggregates
         - name: EVENT_STORE_STORE_EVENTSTORE_DB_NAME
