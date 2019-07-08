@@ -91,9 +91,9 @@ export class msentitypascalDetailComponent implements OnInit, OnDestroy {
   }
   
   subscribemsentitypascalUpdated(){
-    this.msentitypascalDetailservice.subscribemsnamepascalmsentitypascalUpdatedSubscription$()
+    this.msentitypascalDetailservice.subscribemsentitypascalUpdatedSubscription$()
     .pipe(
-      map(subscription => subscription.data.msnamepascalmsentitypascalUpdatedSubscription),
+      map(subscription => subscription.data.msentitypascalUpdatedSubscription),
       takeUntil(this.ngUnsubscribe)
     )
     .subscribe((msentitycamel: any) => {

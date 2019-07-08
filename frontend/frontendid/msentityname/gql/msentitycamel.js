@@ -14,7 +14,6 @@ export const msnamepascalmsentitypascal = gql`
       creatorUser
       modificationTimestamp
       modifierUser
-      businessId
     }
   }
 `;
@@ -32,7 +31,6 @@ export const msnamepascalmsentitiespascal = gql`
       creatorUser
       modificationTimestamp
       modifierUser
-      businessId
     }
   }
 `;
@@ -71,9 +69,9 @@ export const msnamepascalUpdatemsentitypascalState = gql `
 `;
 
 // SUBSCRIPTION
-export const msnamepascalmsentitypascalUpdatedSubscription = gql`
+export const msentitypascalUpdatedSubscription = gql`
   subscription{
-    msnamepascalmsentitypascalUpdatedSubscription{
+    msentitypascalUpdatedSubscription{
       _id
       generalInfo {
         name
@@ -84,7 +82,6 @@ export const msnamepascalmsentitypascalUpdatedSubscription = gql`
       creatorUser
       modificationTimestamp
       modifierUser
-      businessId
     }
   }
 `;

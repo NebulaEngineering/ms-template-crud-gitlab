@@ -33,7 +33,7 @@ export class msentitypascalListService {
    * @param paginator Object that contains info about page number and amount of records to recover 
    * @returns {Observable} Observable with the msentitycamel list
    */
-  getmsentitypascalList$(filterInput, paginatorInput){
+  getmsentitycamelList$(filterInput, paginatorInput){
     return this.gateway.apollo.query<any>({
       query: msnamepascalmsentitiespascal,
       variables: {
@@ -50,7 +50,7 @@ export class msentitypascalListService {
    * @param filter Data to filter the list
    * @returns {Observable} Observable with the amount of msentitycamel
    */
-  getmsentitypascalSize$(filterInput){
+  getmsentitycamelSize$(filterInput){
     return this.gateway.apollo.query<any>({
       query: msnamepascalmsentitiespascalSize,
       variables: {

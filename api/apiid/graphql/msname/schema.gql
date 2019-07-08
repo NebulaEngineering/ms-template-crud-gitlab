@@ -20,8 +20,6 @@ type msnamepascalmsentitypascal {
   modificationTimestamp: BigInt!
   "Modifier user"
   modifierUser: String!
-  "Business ID"
-  businessId: String!
 }
 
 type msnamepascalmsentitypascalGeneralInfo {
@@ -32,8 +30,6 @@ type msnamepascalmsentitypascalGeneralInfo {
 }
 
 input msnamepascalmsentitypascalFilterInput {
-  "ID of the business"
-  businessId: String
   "Name"
   name: String
   "State"
@@ -60,8 +56,6 @@ input msnamepascalmsentitypascalInput {
   generalInfo: msnamepascalmsentitypascalGeneralInfoInput!
   "msentitypascal status"
   state: Boolean!
-  "Business ID"
-  businessId: String!
 }
 
 input msnamepascalmsentitypascalGeneralInfoInput {
@@ -91,5 +85,5 @@ type Mutation {
 
 type Subscription {
   "This events is triggered when a msentitypascal is created or updated"
-  msnamepascalmsentitypascalUpdatedSubscription: msnamepascalmsentitypascal  
+  msentitypascalUpdatedSubscription: msnamepascalmsentitypascal  
 }

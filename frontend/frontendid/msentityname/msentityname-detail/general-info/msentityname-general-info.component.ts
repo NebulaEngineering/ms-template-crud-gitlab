@@ -104,7 +104,7 @@ export class msentitypascalDetailGeneralInfoComponent implements OnInit, OnDestr
   }
 
   subscribeEventUpdated(){
-    this.msentitypascalDetailService.notifymsnamepascalmsentitypascalUpdated$
+    this.msentitypascalDetailService.notifymsentitypascalUpdatedSubscription$
     .pipe(
       takeUntil(this.ngUnsubscribe)
     )
@@ -116,39 +116,26 @@ export class msentitypascalDetailGeneralInfoComponent implements OnInit, OnDestr
   }
 
   createmsentitypascal() {
-    this.toolbarService.onSelectedBusiness$
-    .pipe(
-      tap(selectedBusiness => {
-        if(!selectedBusiness){
-          this.showSnackBar('msnameuppercase.SELECT_BUSINESS');
-        }
-      }),
-      take(1),
-      filter(selectedBusiness => selectedBusiness != null && selectedBusiness.id != null),
-      mergeMap(selectedBusiness => {
-        return this.showConfirmationDialog$("msnameuppercase.CREATE_MESSAGE", "msnameuppercase.CREATE_TITLE")
+    this.showConfirmationDialog$("msnameuppercase.CREATE_MESSAGE", "msnameuppercase.CREATE_TITLE")
         .pipe(
           tap(ok => this.showWaitOperationMessage()), 
           mergeMap(ok => {
             this.msentitycamel = {
               generalInfo: this.msentitycamelGeneralInfoForm.getRawValue(),
-              state: this.msentitycamelStateForm.getRawValue().state,
-              businessId: selectedBusiness.id
+              state: this.msentitycamelStateForm.getRawValue().state
             };
             this.msentitycamel.generalInfo.name = this.msentitycamel.generalInfo.name.toUpperCase();
             return this.msentitypascalDetailService.createmsnamepascalmsentitypascal$(this.msentitycamel);
           }),
           mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
           filter((resp: any) => !resp.errors || resp.errors.length === 0),          
-        )
-      }),
-      takeUntil(this.ngUnsubscribe)
-    ).subscribe(result => {},
-        error => {
-          this.showErrorOperationMessage();
-          console.log('Error ==> ', error);
-        }
-    );
+          takeUntil(this.ngUnsubscribe)
+        ).subscribe(result => {},
+          error => {
+            this.showErrorOperationMessage();
+            console.log('Error ==> ', error);
+          }
+      );
   }
 
   updatemsentitypascalGeneralInfo() {

@@ -7,7 +7,7 @@ import {
   msnamepascalUpdatemsentitypascalGeneralInfo,
   msnamepascalUpdatemsentitypascalState,
   msnamepascalmsentitypascal,
-  msnamepascalmsentitypascalUpdatedSubscription
+  msentitypascalUpdatedSubscription
 } from '../gql/msentitycamel.js';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class msentitypascalDetailService {
 
   msentitycamel = null;
 
-  notifymsnamepascalmsentitypascalUpdated$ = new Subject();
+  notifymsentitypascalUpdatedSubscription$ = new Subject();
 
   constructor(private gateway: GatewayService) {
 
@@ -116,16 +116,16 @@ export class msentitypascalDetailService {
   }
 
   notifymsentityUpdated(filterData){
-    this.notifymsnamepascalmsentitypascalUpdated$.next(filterData);
+    this.notifymsentitypascalUpdatedSubscription$.next(filterData);
   }
 
 /**
- * Event triggered when a business is created, updated or deleted.
+ * Event triggered when a msentitypascal is created, updated or deleted.
  */
-subscribemsnamepascalmsentitypascalUpdatedSubscription$(): Observable<any> {
+subscribemsentitypascalUpdatedSubscription$(): Observable<any> {
   return this.gateway.apollo
   .subscribe({
-    query: msnamepascalmsentitypascalUpdatedSubscription
+    query: msentitypascalUpdatedSubscription
   });
 }
 

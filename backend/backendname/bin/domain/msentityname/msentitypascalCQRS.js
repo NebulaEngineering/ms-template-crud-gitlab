@@ -1,23 +1,20 @@
 "use strict";
 
 const uuidv4 = require("uuid/v4");
-const { of, interval } = require("rxjs");
+const { of } = require("rxjs");
+const { mergeMap, catchError, map, toArray, tap } = require('rxjs/operators');
+
 const Event = require("@nebulae/event-store").Event;
-const eventSourcing = require("../../tools/EventSourcing")();
-const msentitypascalDA = require("../../data/msentitypascalDA");
-const broker = require("../../tools/broker/BrokerFactory")();
-const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
-const GraphqlResponseTools = require('../../tools/GraphqlResponseTools');
-const RoleValidator = require("../../tools/RoleValidator");
-const { take, mergeMap, catchError, map, toArray } = require('rxjs/operators');
-const {
-  CustomError,
-  DefaultError,
-  INTERNAL_SERVER_ERROR_CODE,
-  PERMISSION_DENIED
-} = require("../../tools/customError");
+const { CqrsResponseHelper } = require('@nebulae/backend-node-tools').cqrs;
+const { ConsoleLogger } = require('@nebulae/backend-node-tools').log;
+const { CustomError, INTERNAL_SERVER_ERROR_CODE, PERMISSION_DENIED } = require("@nebulae/backend-node-tools").error;
 
+const eventSourcing = require("../../tools/event-sourcing").eventSourcing;
+const msentitypascalDA = require("./data-access/msentitypascalDA");
 
+const READ_ROLES = ["PLATFORM-ADMIN"];
+const WRITE_ROLES = ["PLATFORM-ADMIN"];
+const REQUIRED_ATTRIBUTES = [];
 
 /**
  * Singleton instance
@@ -28,27 +25,37 @@ class msentitypascalCQRS {
   constructor() {
   }
 
+  /**     
+   * Generates and returns an object that defines the CQRS request handlers.
+   * 
+   * The map is a relationship of: AGGREGATE_TYPE VS { MESSAGE_TYPE VS  { fn: rxjsFunction, instance: invoker_instance } }
+   * 
+   * ## Example
+   *  { "CreateUser" : { "somegateway.someprotocol.mutation.CreateUser" : {fn: createUser$, instance: classInstance } } }
+   */
+  generateRequestProcessorMap() {
+    return {
+      'msentitypascal': {
+        "apiidcamellc.graphql.query.msnamepascalmsentitiespascal": { fn: instance.getmsentitypascalList$, instance, jwtValidation: { roles: READ_ROLES, attributes: REQUIRED_ATTRIBUTES } },
+        "apiidcamellc.graphql.query.msnamepascalmsentitiespascalSize": { fn: instance.getmsentitypascalListSize$, instance, jwtValidation: { roles: READ_ROLES, attributes: REQUIRED_ATTRIBUTES } },
+        "apiidcamellc.graphql.query.msnamepascalmsentitypascal": { fn: instance.getmsentitypascal$, instance, jwtValidation: { roles: READ_ROLES, attributes: REQUIRED_ATTRIBUTES } },
+        "apiidcamellc.graphql.mutation.msnamepascalCreatemsentitypascal": { fn: instance.createmsentitypascal$, instance, jwtValidation: { roles: WRITE_ROLES, attributes: REQUIRED_ATTRIBUTES } },
+        "apiidcamellc.graphql.mutation.msnamepascalUpdatemsentitypascalGeneralInfo": { fn: instance.updatemsentitypascalGeneralInfo$, jwtValidation: { roles: WRITE_ROLES, attributes: REQUIRED_ATTRIBUTES } },
+        "apiidcamellc.graphql.mutation.msnamepascalUpdatemsentitypascalState": { fn: instance.updatemsentitypascalState$, jwtValidation: { roles: WRITE_ROLES, attributes: REQUIRED_ATTRIBUTES } },
+      }
+    }
+  };
+
   /**  
    * Gets the msentitypascal
    *
    * @param {*} args args
    */
   getmsentitypascal$({ args }, authToken) {
-    return RoleValidator.checkPermissions$(
-      authToken.realm_access.roles,
-      "msentitypascal",
-      "getmsentitypascal",
-      PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
-    ).pipe(
-      mergeMap(roles => {
-        const isPlatformAdmin = roles["PLATFORM-ADMIN"];
-        //If an user does not have the role to get the msentitypascal from other business, the query must be filtered with the businessId of the user
-        const businessId = !isPlatformAdmin? (authToken.businessId || ''): null;
-        return msentitypascalDA.getmsentitypascal$(args.id, businessId)
-      }),
-      mergeMap(rawResponse => GraphqlResponseTools.buildSuccessResponse$(rawResponse)),
-      catchError(err => GraphqlResponseTools.handleError$(error))
+    const { id } = args;
+    return msentitypascalDA.getmsentitypascal$(id).pipe(
+      mergeMap(rawResponse => CqrsResponseHelper.buildSuccessResponse$(rawResponse)),
+      catchError(err => CqrsResponseHelper.handleError$(err))
     );
   }
 
@@ -58,164 +65,92 @@ class msentitypascalCQRS {
    * @param {*} args args
    */
   getmsentitypascalList$({ args }, authToken) {
-    return RoleValidator.checkPermissions$(
-      authToken.realm_access.roles,
-      "msentitypascal",
-      "getmsentitypascalList",
-      PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
-    ).pipe(
-      mergeMap(roles => {
-        const isPlatformAdmin = roles["PLATFORM-ADMIN"];
-        //If an user does not have the role to get the msentitypascal from other business, the query must be filtered with the businessId of the user
-        const businessId = !isPlatformAdmin? (authToken.businessId || ''): args.filterInput.businessId;
-        const filterInput = args.filterInput;
-        filterInput.businessId = businessId;
-
-        return msentitypascalDA.getmsentitypascalList$(filterInput, args.paginationInput);
-      }),
+    const { filterInput, paginationInput } = args;
+    return msentitypascalDA.getmsentitypascalList$(filterInput, paginationInput).pipe(
       toArray(),
-      mergeMap(rawResponse => GraphqlResponseTools.buildSuccessResponse$(rawResponse)),
-      catchError(err => GraphqlResponseTools.handleError$(err))
+      mergeMap(rawResponse => CqrsResponseHelper.buildSuccessResponse$(rawResponse)),
+      catchError(err => CqrsResponseHelper.handleError$(err))
     );
   }
 
-    /**  
-   * Gets the amount of the msentitypascal according to the filter
-   *
-   * @param {*} args args
-   */
+  /**  
+ * Gets the amount of the msentitypascal according to the filter
+ *
+ * @param {*} args args
+ */
   getmsentitypascalListSize$({ args }, authToken) {
-    return RoleValidator.checkPermissions$(
-      authToken.realm_access.roles,
-      "msentitypascal",
-      "getmsentitypascalListSize",
-      PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
-    ).pipe(
-      mergeMap(roles => {
-        const isPlatformAdmin = roles["PLATFORM-ADMIN"];
-        //If an user does not have the role to get the msentitypascal from other business, the query must be filtered with the businessId of the user
-        const businessId = !isPlatformAdmin? (authToken.businessId || ''): args.filterInput.businessId;
-        const filterInput = args.filterInput;
-        filterInput.businessId = businessId;
-
-        return msentitypascalDA.getmsentitypascalSize$(filterInput);
-      }),
-      mergeMap(rawResponse => GraphqlResponseTools.buildSuccessResponse$(rawResponse)),
-      catchError(err => GraphqlResponseTools.handleError$(err))
+    const { filterInput } = args;
+    return msentitypascalDA.getmsentitypascalSize$(filterInput).pipe(
+      mergeMap(rawResponse => CqrsResponseHelper.buildSuccessResponse$(rawResponse)),
+      catchError(err => CqrsResponseHelper.handleError$(err))
     );
   }
 
-    /**
-  * Create a msentitycamel
+  /**
+  * Create a msentitypascal
   */
- createmsentitypascal$({ root, args, jwt }, authToken) {
-    const msentitycamel = args ? args.input: undefined;
-    msentitycamel._id = uuidv4();
-    msentitycamel.creatorUser = authToken.preferred_username;
-    msentitycamel.creationTimestamp = new Date().getTime();
-    msentitycamel.modifierUser = authToken.preferred_username;
-    msentitycamel.modificationTimestamp = new Date().getTime();
-
-    return RoleValidator.checkPermissions$(
-      authToken.realm_access.roles,
-      "msentitypascal",
-      "createmsentitypascal$",
-      PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
-    ).pipe(
-      mergeMap(() => eventSourcing.eventStore.emitEvent$(
-        new Event({
-          eventType: "msentitypascalCreated",
-          eventTypeVersion: 1,
-          aggregateType: "msentitypascal",
-          aggregateId: msentitycamel._id,
-          data: msentitycamel,
-          user: authToken.preferred_username
-        }))
-      ),
-      map(() => ({ code: 200, message: `msentitypascal with id: ${msentitycamel._id} has been created` })),
-      mergeMap(r => GraphqlResponseTools.buildSuccessResponse$(r)),
-      catchError(err => GraphqlResponseTools.handleError$(err))
-    );
+  createmsentitypascal$({ root, args, jwt }, authToken) {
+    const aggregateId = uuidv4();
+    const { input } = args;
+    return eventSourcing.emitEvent$(
+      new Event({
+        eventType: "Created",
+        eventTypeVersion: 1,
+        aggregateType: 'msentitypascal',
+        aggregateId,
+        data: input,
+        user: authToken.preferred_username
+      })).pipe(
+        map(() => ({ code: 200, message: `msentitypascal with id: ${aggregateId} has been created` })),
+        mergeMap(r => CqrsResponseHelper.buildSuccessResponse$(r)),
+        catchError(err => CqrsResponseHelper.handleError$(err))
+      );
   }
 
-    /**
-   * Edit the msentitycamel state
-   */
+  /**
+ * Edit the msentitypascal state
+ */
   updatemsentitypascalGeneralInfo$({ root, args, jwt }, authToken) {
-    const msentitycamel = {
-      _id: args.id,
-      generalInfo: args.input,
-      modifierUser: authToken.preferred_username,
-      modificationTimestamp: new Date().getTime()
-    };
+    const { id, input } = args;
 
-    return RoleValidator.checkPermissions$(
-      authToken.realm_access.roles,
-      "msentitypascal",
-      "updatemsentitypascalGeneralInfo$",
-      PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+    return eventSourcing.emitEvent$(
+      new Event({
+        eventType: "GeneralInfoUpdated",
+        eventTypeVersion: 1,
+        aggregateType: 'msentitypascal',
+        aggregateId: id,
+        data: input,
+        user: authToken.preferred_username
+      })
     ).pipe(
-      mergeMap(() => eventSourcing.eventStore.emitEvent$(
-        new Event({
-          eventType: "msentitypascalGeneralInfoUpdated",
-          eventTypeVersion: 1,
-          aggregateType: "msentitypascal",
-          aggregateId: msentitycamel._id,
-          data: msentitycamel,
-          user: authToken.preferred_username
-        })
-      )
-      ),
-      map(() => ({ code: 200, message: `msentitypascal with id: ${msentitycamel._id} has been updated` })),
-      mergeMap(r => GraphqlResponseTools.buildSuccessResponse$(r)),
-      catchError(err => GraphqlResponseTools.handleError$(err))
+      map(() => ({ code: 200, message: `msentitypascal with id: ${id} has been updated` })),
+      mergeMap(r => CqrsResponseHelper.buildSuccessResponse$(r)),
+      catchError(err => CqrsResponseHelper.handleError$(err))
     );
   }
 
 
   /**
-   * Edit the msentitycamel state
+   * Edit the msentitypascal state
    */
   updatemsentitypascalState$({ root, args, jwt }, authToken) {
-    const msentitycamel = {
-      _id: args.id,
-      state: args.newState,
-      modifierUser: authToken.preferred_username,
-      modificationTimestamp: new Date().getTime()
-    };
+    const { id, newState } = args;
 
-    return RoleValidator.checkPermissions$(
-      authToken.realm_access.roles,
-      "msentitypascal",
-      "updatemsentitypascalState$",
-      PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
-    ).pipe(
-      mergeMap(() => eventSourcing.eventStore.emitEvent$(
-        new Event({
-          eventType: "msentitypascalStateUpdated",
-          eventTypeVersion: 1,
-          aggregateType: "msentitypascal",
-          aggregateId: msentitycamel._id,
-          data: msentitycamel,
-          user: authToken.preferred_username
-        })
-      )
-      ),
-      map(() => ({ code: 200, message: `msentitypascal with id: ${msentitycamel._id} has been updated` })),
-      mergeMap(r => GraphqlResponseTools.buildSuccessResponse$(r)),
-      catchError(err => GraphqlResponseTools.handleError$(err))
-    );
+    return eventSourcing.emitEvent$(
+      new Event({
+        eventType: "StateUpdated",
+        eventTypeVersion: 1,
+        aggregateType: 'msentitypascal',
+        aggregateId: id,
+        data: { state: newState },
+        user: authToken.preferred_username
+      })).pipe(
+        map(() => ({ code: 200, message: `msentitypascal with id: ${id} has been updated` })),
+        mergeMap(r => CqrsResponseHelper.buildSuccessResponse$(r)),
+        catchError(err => CqrsResponseHelper.handleError$(err))
+      );
   }
-
-
   //#endregion
-
-
 }
 
 /**
@@ -224,7 +159,7 @@ class msentitypascalCQRS {
 module.exports = () => {
   if (!instance) {
     instance = new msentitypascalCQRS();
-    console.log(`${instance.constructor.name} Singleton created`);
+    ConsoleLogger.i(`${instance.constructor.name} Singleton created`);
   }
   return instance;
 };

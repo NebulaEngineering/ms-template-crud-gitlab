@@ -257,13 +257,11 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
     combineLatest(
       this.msentitypascalListservice.filter$,
       this.msentitypascalListservice.paginator$,
-      this.toolbarService.onSelectedBusiness$
     ).pipe(
       debounceTime(500),
-      filter(([filter, paginator, selectedBusiness]) => (filter != null && paginator != null)),
-      map(([filter, paginator,selectedBusiness]) => {
+      filter(([filter, paginator]) => (filter != null && paginator != null)),
+      map(([filter, paginator]) => {
         const filterInput = {
-          businessId: selectedBusiness ? selectedBusiness.id: null,
           name: filter.name,
           creatorUser: filter.creatorUser,
           creationTimestamp: filter.creationTimestamp ? filter.creationTimestamp.valueOf() : null
@@ -278,8 +276,8 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
       }),
       mergeMap(([filterInput, paginationInput]) => {
         return forkJoin(
-          this.getmsentitypascalList$(filterInput, paginationInput),
-          this.getmsentitypascalSize$(filterInput),
+          this.getmsentitycamelList$(filterInput, paginationInput),
+          this.getmsentitycamelSize$(filterInput),
         )
       }),
       takeUntil(this.ngUnsubscribe)
@@ -295,8 +293,8 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
    * @param filterInput 
    * @param paginationInput 
    */
-  getmsentitypascalList$(filterInput, paginationInput){
-    return this.msentitypascalListservice.getmsentitypascalList$(filterInput, paginationInput)
+  getmsentitycamelList$(filterInput, paginationInput){
+    return this.msentitypascalListservice.getmsentitycamelList$(filterInput, paginationInput)
     .pipe(
       mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
       map(resp => resp.data.msnamepascalmsentitiespascal)
@@ -307,8 +305,8 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
    * Gets the msentitycamel size
    * @param filterInput 
    */
-  getmsentitypascalSize$(filterInput){
-    return this.msentitypascalListservice.getmsentitypascalSize$(filterInput)
+  getmsentitycamelSize$(filterInput){
+    return this.msentitypascalListservice.getmsentitycamelSize$(filterInput)
     .pipe(
       mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
       map(resp => resp.data && resp.data.msnamepascalmsentitiespascalSize ? resp.data.msnamepascalmsentitiespascalSize: 0)
@@ -334,16 +332,7 @@ export class msentitypascalListComponent implements OnInit, OnDestroy {
    * Navigates to the detail page
    */
   goToDetail(){
-    this.toolbarService.onSelectedBusiness$
-    .pipe(
-      take(1)
-    ).subscribe(selectedBusiness => {
-      if(selectedBusiness == null || selectedBusiness.id == null){
-        this.showSnackBar('msnameuppercase.SELECT_BUSINESS');
-      }else{
-        this.router.navigate(['msentityname/new']);
-      }      
-    })    
+    this.router.navigate(['msentityname/new']);    
   }
 
   showSnackBar(message) {

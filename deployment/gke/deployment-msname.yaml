@@ -56,6 +56,11 @@ spec:
         # RESET LOCK INITIALIZE BACKED
         - name: LOCKVERSION
           value: "initial_lock"
+        # THIS MICROSERVICES CUSTOM CONFIGS
+        - name: LOG_LEVEL
+          value: "0"
+        - name: MICROBACKEND_KEY
+          value: ms-backendname_mbe_backendname
         resources:
           requests:
             cpu: "50m"

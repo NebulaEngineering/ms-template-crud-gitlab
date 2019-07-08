@@ -20,7 +20,7 @@
           <div fxLayout="column" fxLayoutAlign="start start" *fuseIfOnDom>
 
             <div class="h2" *ngIf="msentitycamel && msentitycamel._id">
-              {{msentitycamel.name}}
+              {{msentitycamel.generalInfo.name}}
             </div>
 
             <div class="h2" *ngIf="!msentitycamel || (msentitycamel && !msentitycamel._id)">
@@ -38,14 +38,16 @@
 
       <!-- CONTENT CARD -->
       <div class="content-card mat-white-bg">
-        <mat-tab-group>
+        <div class="content">
+            <mat-tab-group>
 
-          <mat-tab label="{{'msnameuppercase.DETAILS.TABS.GENERAL_INFO' | translate}}">
-            <msentityname-general-info [pageType]="pageType" [msentitycamel]="msentitycamel" *ngIf="pageType">
-            </msentityname-general-info>
-          </mat-tab>
+              <mat-tab label="{{'msnameuppercase.DETAILS.TABS.GENERAL_INFO' | translate}}">
+                <msentityname-general-info [pageType]="pageType" [msentitycamel]="msentitycamel" *ngIf="pageType">
+                </msentityname-general-info>
+              </mat-tab>
 
-        </mat-tab-group>
+            </mat-tab-group>
+         </div>
 
         <!-- / CONTENT -->
 
