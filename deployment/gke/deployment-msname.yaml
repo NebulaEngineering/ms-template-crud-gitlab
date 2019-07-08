@@ -64,6 +64,8 @@ spec:
           value: "0"
         - name: MICROBACKEND_KEY
           value: ms-backendname_mbe_backendname
+        - name: EMI_MATERIALIZED_VIEW_UPDATES_TOPIC
+          value: emi-gateway-materialized-view-updates
         resources:
           requests:
             cpu: "50m"
