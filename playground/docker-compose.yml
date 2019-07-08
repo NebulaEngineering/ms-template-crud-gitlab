@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  broker-mqtt-lineadirecta-generator:
+    image: eclipse-mosquitto
+    ports:
+      - "9001:9001"
+      - "1883:1883"
+    volumes:
+      - NEBULAE_MQTT:/mosquitto/data            
+  store-mongo-lineadirecta-generator:
+    image: mongo:4
+    ports:
+      - "27017:27017"
+    environment: 
+        - storageEngine=wiredTiger
+    volumes: 
+      - NEBULAE_MONGO:/data/db
+volumes: 
+  NEBULAE_MQTT:
+  NEBULAE_MONGO:
