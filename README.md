@@ -24,7 +24,7 @@ _This MicroService is built on top of NebulaE MicroService Framework.  Please se
 ├── frontend                            => Micro-FrontEnd  
 │   └── frontendid                      => Micro-FrontEnd for [frontendid FrontEnd](https://gitlab.com/git_rep_directoryo_directory_path/frontendid)
 ├── api                                 => Micro-APIs  
-│   └── apiid                           => Micro-API for [apiid API](https://gitlab.com/git_repo_directory_path/apiid)  
+│   └── apiid                           => Micro-API for [apiid API](https://gitlab.com/one-nebula/super-van-plus/apiid)  
 ├── backend                             => Micro-BackEnds  
 │   ├── backendname                     => Micro-BackEnd responsible for ...
 ├── etc                                 => Micro-Service config Files.  
@@ -48,7 +48,7 @@ Exposed interfaces to send Commands and Queries by the CQRS principles.
 The MicroService exposes its interfaces as Micro-APIs that are nested on the general API.
 
 ## GraphQL throught apiid API <a name="api_apiid_graphql"></a>
-These are the exposed GraphQL functions throught the [apiid API](https://gitlab.com/git_repo_directory_path/apiid).  
+These are the exposed GraphQL functions throught the [apiid API](https://gitlab.com/one-nebula/super-van-plus/apiid).  
 
 Note: You may find the GraphQL schema [here](api/apiid/graphql/msname/schema.gql)
 
@@ -153,7 +153,7 @@ Each BackEnd has the following running commands:
 *   EventType: what for ...
 
 ### CronJobs <a name="backend_backendname_cronjobs"></a>
-Time-based jobs that are configured and triggered by the [CronJob MicroService](https://gitlab.com/git_repo_directory_path/ms-cronjob)
+Time-based jobs that are configured and triggered by the [CronJob MicroService](https://gitlab.com/one-nebula/super-van-plus/ms-cronjob)
 
 
 # Development environment <a name="dev_env"></a>
@@ -173,7 +173,7 @@ Time-based jobs that are configured and triggered by the [CronJob MicroService](
 
 ![Development environment](docs/images/ms-devices-location-dev-env.png "Dev_environment")
 ### 1. clone this repo  
-   ```git clone https://gitlab.com/git_repo_directory_path/ms-msname.git```  
+   ```git clone https://gitlab.com/one-nebula/super-van-plus/ms-msname.git```  
    
 ### 2. start databases, broker and security systems using docker-compose
 ```
@@ -212,12 +212,12 @@ Add the **developer** and **operator** rol to your user:
 
 ### 5. Compose FrontEnd
 ```
-nebulae compose-ui development --shell-type=FUSE2_ANGULAR --shell-repo=https://gitlab.com/git_repo_directory_path/frontendid --frontend-id=frontendid --output-dir=/FULL_PATH_TO_REPO/ms-msname/playground/frontendid  --setup-file=/FULL_PATH_TO_REPO/ms-msname/etc/mfe-setup.json
+nebulae compose-ui development --shell-type=FUSE2_ANGULAR --shell-repo=https://gitlab.com/one-nebula/super-van-plus/frontendid --frontend-id=frontendid --output-dir=/FULL_PATH_TO_REPO/ms-msname/playground/frontendid  --setup-file=/FULL_PATH_TO_REPO/ms-msname/etc/mfe-setup.json
 ```
 
 ### 6. Compose the API apiid
 ```
-nebulae compose-api development --api-type=NEBULAE_GATEWAY --api-repo=https://gitlab.com/git_repo_directory_path/apiid --api-id=apiid --output-dir=FULL_PATH_TO_REPO/ms-msname/playground/apiid  --setup-file=FULL_PATH_TO_REPO/ms-msname/etc/mapi-setup.json
+nebulae compose-api development --api-type=NEBULAE_GATEWAY --api-repo=https://gitlab.com/one-nebula/super-van-plus/apiid --api-id=apiid --output-dir=FULL_PATH_TO_REPO/ms-msname/playground/apiid  --setup-file=FULL_PATH_TO_REPO/ms-msname/etc/mapi-setup.json
 ```
 
 ### 7. Set the JWT token 

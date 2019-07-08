@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/git_repo_directory_path/msname.git"
+    "url": "git+https://gitlab.com/one-nebula/super-van-plus/msname.git"
   },
   "keywords": [
     "backend"
@@ -25,9 +25,9 @@
   "author": "sebastian.molano@nebulae.com.co",
   "license": "apache-2.0",
   "bugs": {
-    "url": "https://gitlab.com/git_repo_directory_path/msname/issues"
+    "url": "https://gitlab.com/one-nebula/super-van-plus/msname/issues"
   },
-  "homepage": "https://gitlab.com/git_repo_directory_path/msname#readme",
+  "homepage": "https://gitlab.com/one-nebula/super-van-plus/msname#readme",
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.0.5"
