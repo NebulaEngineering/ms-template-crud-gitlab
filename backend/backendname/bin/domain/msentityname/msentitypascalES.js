@@ -11,6 +11,7 @@ const msentitypascalDA = require('./data-access/msentitypascalDA');
 const MATERIALIZED_VIEW_TOPIC = process.env.EMI_MATERIALIZED_VIEW_UPDATES_TOPIC;
 /**
  * Singleton instance
+ * @type { msentitypascalES }
  */
 let instance;
 

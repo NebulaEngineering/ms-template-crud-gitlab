@@ -18,6 +18,7 @@ const REQUIRED_ATTRIBUTES = [];
 
 /**
  * Singleton instance
+ * @type { msentitypascalCQRS }
  */
 let instance;
 
