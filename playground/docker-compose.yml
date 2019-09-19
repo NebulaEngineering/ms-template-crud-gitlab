@@ -1,14 +1,14 @@
 version: "3"
 
 services:
-  broker-mqtt-lineadirecta-generator:
+  broker-mqtt-msname:
     image: eclipse-mosquitto
     ports:
       - "9001:9001"
       - "1883:1883"
     volumes:
       - NEBULAE_MQTT:/mosquitto/data            
-  store-mongo-lineadirecta-generator:
+  store-mongo-msname:
     image: mongo:4
     ports:
       - "27017:27017"
